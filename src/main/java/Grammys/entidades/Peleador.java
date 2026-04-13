@@ -1,4 +1,4 @@
 package Grammys.entidades;
-public class peleador2 {
+public class Peleador {
 
 }
