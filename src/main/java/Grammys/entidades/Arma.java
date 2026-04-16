@@ -35,7 +35,8 @@ public class Arma {
     public void setPeso(float peso) {
         this.peso = peso;
     }
-    
+       @ManyToMany(mappedBy = "ArmaDelPeleador") 
+    private List<Arma> Armas;
 
 
 }
