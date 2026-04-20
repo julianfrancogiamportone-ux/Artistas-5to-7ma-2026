@@ -1,11 +1,7 @@
 package Grammys.entidades;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import java.util.*;
+import jakarta.persistence.*;
 
 @Entity
 public class Peleador {
@@ -16,9 +12,25 @@ public class Peleador {
     private int puntosVida;
     private int energia;
     private float defensaBase;
-    private Arma armaEquipada;
-    private List inventario;
-    private List habilidades;
+    @ManyToMany
+    @JoinTable(
+            // Nombre de la tabla intermedia en SQL
+            name = "Arma_Peleador",
+            // FK de esta entidad
+            joinColumns = @JoinColumn(name = "Peleador_id"),
+            // FK de la otra entidad
+            inverseJoinColumns = @JoinColumn(name = "Arma_id"))
+    private List<Arma> ArmaDelPeleador;
+
+    @ManyToMany
+    @JoinTable(
+            // Nombre de la tabla intermedia en SQL
+            name = "Ataque_Peleador",
+            // FK de esta entidad
+            joinColumns = @JoinColumn(name = "Peleador_id"),
+            // FK de la otra entidad
+            inverseJoinColumns = @JoinColumn(name = "Ataque_id"))
+    private List<Ataque> AtaqueDelPeleador;
 
     public int getId() {
         return id;
@@ -59,56 +71,5 @@ public class Peleador {
     public void setDefensaBase(float defensaBase) {
         this.defensaBase = defensaBase;
     }
-
-    public Arma getArmaEquipada() {
-        return armaEquipada;
-    }
-
-    public void setArmaEquipada(Arma armaEquipada) {
-        this.armaEquipada = armaEquipada;
-    }
-
-    public list getInventario() {
-        return inventario;
-    }
-
-    public void setInventario(list inventario) {
-        this.inventario = inventario;
-    }
-
-    public list getHabilidades() {
-        return habilidades;
-    }
-
-    public void setHabilidades(list habilidades) {
-        this.habilidades = habilidades;
-    }
-
-    @ManyToMany
-@JoinTable(
-// Nombre de la tabla intermedia en SQL
-name = "Arma_Peleador",
-// FK de esta entidad
-joinColumns = @JoinColumn(name = "Peleador_id"),
-// FK de la otra entidad
-inverseJoinColumns = @JoinColumn(name = "Arma_id")
-)
-private List<Arma> ArmaDelPeleador;
-
-@ManyToMany
-@JoinTable(
-// Nombre de la tabla intermedia en SQL
-name = "Ataque_Peleador",
-// FK de esta entidad
-joinColumns = @JoinColumn(name = "Peleador_id"),
-// FK de la otra entidad
-inverseJoinColumns = @JoinColumn(name = "Ataque_id")
-)
-private List<Ataque> AtaqueDelPeleador;
-}
-
-    
-
-
 
 }

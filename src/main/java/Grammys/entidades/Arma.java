@@ -1,5 +1,6 @@
 package Grammys.entidades;
 import jakarta.persistence.*; 
+import java.util.List;
 @Entity
 public class Arma {
 @Id 
@@ -8,6 +9,8 @@ public class Arma {
     private String nombre;
     private int bonificadorDanio;
     private float peso;
+        @ManyToMany(mappedBy = "ArmaDelPeleador") 
+    private List<Peleador> Peleadores;
 
     public Arma() {
 	}
@@ -35,8 +38,7 @@ public class Arma {
     public void setPeso(float peso) {
         this.peso = peso;
     }
-       @ManyToMany(mappedBy = "ArmaDelPeleador") 
-    private List<Arma> Armas;
+   
 
 
 }
