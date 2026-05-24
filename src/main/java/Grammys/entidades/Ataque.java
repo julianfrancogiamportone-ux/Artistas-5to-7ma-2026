@@ -40,7 +40,14 @@ private List<Peleador> Peleador;
     public void setDanioBase(int danioBase) {
         this.danioBase = danioBase;
     }
+    
+    public Ataque(String nombre, int costoEnergia, int danioBase) {
+        this.nombre = nombre;
+        this.costoEnergia = costoEnergia;
+        this.danioBase = danioBase;
+    }
 
-
-
+    
 }
+
+    

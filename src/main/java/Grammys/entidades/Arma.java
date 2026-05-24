@@ -9,7 +9,7 @@ public class Arma {
     private String nombre;
     private int bonificadorDanio;
     private float peso;
-        @ManyToMany(mappedBy = "ArmaDelPeleador") 
+    @ManyToMany(mappedBy = "ArmaDelPeleador")
     private List<Peleador> Peleadores;
 
     public Arma() {
@@ -38,7 +38,12 @@ public class Arma {
     public void setPeso(float peso) {
         this.peso = peso;
     }
-   
+
+    public Arma(String nombre, int bonificadorDanio, float peso) {
+        this.nombre = nombre;
+        this.bonificadorDanio = bonificadorDanio;
+        this.peso = peso;
+    }
 
 
 }

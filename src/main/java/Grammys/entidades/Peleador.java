@@ -1,5 +1,4 @@
 package Grammys.entidades;
-
 import java.util.*;
 import jakarta.persistence.*;
 
@@ -72,4 +71,31 @@ public class Peleador {
         this.defensaBase = defensaBase;
     }
 
+    public Peleador() {
+    }
+    public Peleador (String nombre, int puntosVida, int energia, float defensaBase) {
+        this.nombre = nombre;
+        this.puntosVida = puntosVida;
+        this.energia = energia;
+        this.defensaBase = defensaBase;
+    }
+
+    public List<Arma> getArmaDelPeleador() {
+        return ArmaDelPeleador;
+    }
+
+    public void setArmaDelPeleador(List<Arma> armaDelPeleador) {
+        ArmaDelPeleador = armaDelPeleador;
+    }
+
+    public List<Ataque> getAtaqueDelPeleador() {
+        return AtaqueDelPeleador;
+    }
+
+    public void setAtaqueDelPeleador(List<Ataque> ataqueDelPeleador) {
+        AtaqueDelPeleador = ataqueDelPeleador;
+    }
+
+
+    
 }
