@@ -1,7 +1,14 @@
 package Grammys.entidades;
 
-import java.util.*;
-import jakarta.persistence.*;
+import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 
 @Entity
 public class Peleador {
@@ -71,5 +78,34 @@ public class Peleador {
     public void setDefensaBase(float defensaBase) {
         this.defensaBase = defensaBase;
     }
+    public Peleador(String nombre, int puntosVida, int energia, float defensaBase) {
+        this.nombre = nombre;
+        this.puntosVida = puntosVida;
+        this.energia = energia;
+        this.defensaBase= defensaBase;
+    }
+    public Peleador() {
+    }
 
+    public void imprimir(){
+
+        System.out.println(nombre + puntosVida);   
+    }
+
+    public List<Arma> getArmaDelPeleador() {
+    return ArmaDelPeleador;
+    }
+
+    public void setArmaDelPeleador(List<Arma> armaDelPeleador) {
+    ArmaDelPeleador = armaDelPeleador;
+    }
+
+    public List<Ataque> getAtaqueDelPeleador() {
+    return AtaqueDelPeleador;
+    }
+
+    public void setAtaqueDelPeleador(List<Ataque> ataqueDelPeleador) {
+    AtaqueDelPeleador = ataqueDelPeleador;
+    }
+    
 }
