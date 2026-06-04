@@ -7,23 +7,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody; 
 import org.springframework.web.bind.annotation.RequestMapping; 
 import org.springframework.web.bind.annotation.RestController; 
-import Grammys.iservice.ArmaIService; 
-import Grammys.entidades.Arma; 
+import Grammys.iservice.AtaqueIService; 
+import Grammys.entidades.Ataque; 
  
 @RestController 
-@RequestMapping("/api/arms") 
-public class ArmaController { 
+@RequestMapping("/api/attacks") 
+public class AtaqueController { 
  
     @Autowired 
-    private ArmaIService aService; 
+    private AtaqueIService atService; 
  
     @GetMapping 
-    public List<Arma> getAllCharacters() { 
-    return aService.findAllArmas(); 
+    public List<Ataque> getAllCharacters() { 
+    return atService.findAllAtaques(); 
     } 
  
     @PostMapping 
-    public Arma createCharacter(@RequestBody Arma arma) { 
-    return aService.saveArma(arma); 
+    public Ataque createCharacter(@RequestBody Ataque ataque) { 
+    return atService.saveAtaque(ataque); 
     } 
 }
