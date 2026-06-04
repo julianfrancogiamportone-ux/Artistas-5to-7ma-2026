@@ -1,5 +1,5 @@
 package Grammys.controller;
 
-public interface controller1 {
+public interface controller {
 
 }
