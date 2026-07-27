@@ -14,11 +14,12 @@ import jakarta.persistence.ManyToMany;
 public class Peleador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String nombre;
     private int puntosVida;
     private int energia;
     private float defensaBase;
+    private String url_imagen;
     @ManyToMany
     @JoinTable(
             // Nombre de la tabla intermedia en SQL
@@ -39,11 +40,11 @@ public class Peleador {
             inverseJoinColumns = @JoinColumn(name = "Ataque_id"))
     private List<Ataque> AtaqueDelPeleador;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -107,5 +108,13 @@ public class Peleador {
     public void setAtaqueDelPeleador(List<Ataque> ataqueDelPeleador) {
     AtaqueDelPeleador = ataqueDelPeleador;
     }
+
+    public String getUrl_imagen() {
+		return url_imagen;
+	}
+
+	public void setUrl_imagen(String url_imagen) {
+		this.url_imagen = url_imagen;
+	}
     
 }

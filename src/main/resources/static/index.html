@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammys Battle Stage - Edición Épica</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Librería externa para el confeti de victoria -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>🏆 Grammys Battle Stage 🎵</h1>
+        <p class="subtitle">El enfrentamiento musical definitivo. Selecciona tus artistas, revisa su equipamiento y define al campeón.</p>
+    </header>
+
+    <main id="fight-container">
+        
+        <!-- Artista 1 -->
+        <div class="player-card">
+            <div class="img-container">
+                <img id="fighter1Image" class="fighter-img" src="placeholder1.png" alt="Artista 1">
+            </div>
+            <select id="fighter1">
+                <option value="" disabled selected>Seleccioná al Artista 1...</option>
+            </select>
+            
+            <!-- Estadísticas y Barras -->
+            <div id="stats1" class="stats-box hidden">
+                <p>❤️ Vida: <span id="hp1">-</span></p>
+                <div class="bar-container"><div id="hpBar1" class="bar hp-bar"></div></div>
+                
+                <p>⚡ Energía: <span id="en1">-</span></p>
+                <div class="bar-container"><div id="enBar1" class="bar en-bar"></div></div>
+
+                <p>🛡️ Defensa Base: <span id="def1">-</span></p>
+
+                <!-- Armas y Ataques desde Java -->
+                <div class="gear-section">
+                    <p>⚔️ <strong>Arma:</strong> <span id="arma1">Ninguna</span></p>
+                    <p>🔥 <strong>Ataque:</strong> <span id="ataque1">Ninguno</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VS central -->
+        <div class="vs-container">
+            <div class="vs-badge">VS</div>
+        </div>
+
+        <!-- Artista 2 -->
+        <div class="player-card">
+            <div class="img-container">
+                <img id="fighter2Image" class="fighter-img" src="placeholder2.png" alt="Artista 2">
+            </div>
+            <select id="fighter2">
+                <option value="" disabled selected>Seleccioná al Artista 2...</option>
+            </select>
+            
+            <!-- Estadísticas y Barras -->
+            <div id="stats2" class="stats-box hidden">
+                <p>❤️ Vida: <span id="hp2">-</span></p>
+                <div class="bar-container"><div id="hpBar2" class="bar hp-bar"></div></div>
+                
+                <p>⚡ Energía: <span id="en2">-</span></p>
+                <div class="bar-container"><div id="enBar2" class="bar en-bar"></div></div>
+
+                <p>🛡️ Defensa Base: <span id="def2">-</span></p>
+
+                <!-- Armas y Ataques desde Java -->
+                <div class="gear-section">
+                    <p>⚔️ <strong>Arma:</strong> <span id="arma2">Ninguna</span></p>
+                    <p>🔥 <strong>Ataque:</strong> <span id="ataque2">Ninguno</span></p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Botones de acción -->
+    <div class="buttons-row">
+        <button id="fightButton">¡Iniciar Enfrentamiento Musical! 🎸</button>
+        <button id="randomButton">🎲 Pelea Aleatoria</button>
+    </div>
+
+    <!-- Resultado de la batalla -->
+    <div id="result" class="hidden"></div>
+
+    <!-- Historial de Combates -->
+    <section id="history-section" class="hidden">
+        <h3>📜 Historial de Batallas de la Gala</h3>
+        <ul id="historyList"></ul>
+    </section>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
