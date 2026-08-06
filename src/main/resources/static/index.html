@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grammys Battle Stage - Edición Épica</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- Librería externa para el confeti de victoria -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
@@ -20,11 +19,12 @@
         <!-- Artista 1 -->
         <div class="player-card">
             <div class="img-container">
-                <img id="fighter1Image" class="fighter-img" src="placeholder1.png" alt="Artista 1">
+               <img id="fighter1Image" class="fighter-img" src="placeholder1.png" alt="Artista 1">
             </div>
-            <select id="fighter1">
-                <option value="" disabled selected>Seleccioná al Artista 1...</option>
-            </select>
+            <p class="grid-label">Seleccioná al Artista 1...</p>
+            <div id="grid1" class="mini-grid">
+                <p class="mini-grid-loading">Cargando personajes...</p>
+            </div>
             
             <!-- Estadísticas y Barras -->
             <div id="stats1" class="stats-box hidden">
@@ -54,9 +54,10 @@
             <div class="img-container">
                 <img id="fighter2Image" class="fighter-img" src="placeholder2.png" alt="Artista 2">
             </div>
-            <select id="fighter2">
-                <option value="" disabled selected>Seleccioná al Artista 2...</option>
-            </select>
+            <p class="grid-label">Seleccioná al Artista 2...</p>
+            <div id="grid2" class="mini-grid">
+                <p class="mini-grid-loading">Cargando personajes...</p>
+            </div>
             
             <!-- Estadísticas y Barras -->
             <div id="stats2" class="stats-box hidden">
@@ -78,16 +79,13 @@
 
     </main>
 
-    <!-- Botones de acción -->
     <div class="buttons-row">
         <button id="fightButton">¡Iniciar Enfrentamiento Musical! 🎸</button>
         <button id="randomButton">🎲 Pelea Aleatoria</button>
     </div>
 
-    <!-- Resultado de la batalla -->
     <div id="result" class="hidden"></div>
 
-    <!-- Historial de Combates -->
     <section id="history-section" class="hidden">
         <h3>📜 Historial de Batallas de la Gala</h3>
         <ul id="historyList"></ul>

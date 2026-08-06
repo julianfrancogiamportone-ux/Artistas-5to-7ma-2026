@@ -1,6 +1,6 @@
 const API_URL = 'http://localhost:8081/api/characters';
+const API_URL2 = 'http://localhost:8080/api/characters';
 
-// --- Contador de victorias por artista (se guarda en el navegador) ---
 let victorias = JSON.parse(localStorage.getItem('victoriasGrammys') || '{}');
 
 function guardarVictoria(nombre) {
@@ -16,11 +16,10 @@ function medallaPara(nombre) {
     return '';
 }
 
-// --- Sonido de victoria (se genera con la Web Audio API, sin archivos externos) ---
 function sonidoVictoria() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const notas = [523.25, 659.25, 783.99, 1046.50]; // Do-Mi-Sol-Do agudo, un jingle cortito
+        const notas = [523.25, 659.25, 783.99, 1046.50];
         notas.forEach((freq, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -39,15 +38,14 @@ function sonidoVictoria() {
     }
 }
 
-const fighter1Select = document.getElementById('fighter1');
-const fighter2Select = document.getElementById('fighter2');
 const fighter1Image = document.getElementById('fighter1Image');
 const fighter2Image = document.getElementById('fighter2Image');
+const grid1 = document.getElementById('grid1');
+const grid2 = document.getElementById('grid2');
 const fightButton = document.getElementById('fightButton');
 const randomButton = document.getElementById('randomButton');
 const resultDiv = document.getElementById('result');
 
-// Elementos de estadísticas y barras
 const stats1 = document.getElementById('stats1');
 const stats2 = document.getElementById('stats2');
 const hp1 = document.getElementById('hp1');
@@ -66,112 +64,141 @@ const enBar2 = document.getElementById('enBar2');
 const arma2Span = document.getElementById('arma2');
 const ataque2Span = document.getElementById('ataque2');
 
-// Historial
 const historySection = document.getElementById('history-section');
 const historyList = document.getElementById('historyList');
 
 let peleadores = [];
+let fighter1Data = null;
+let fighter2Data = null;
 
-async function fetchData() {
-    try {
-        const response = await fetch(API_URL);
-        peleadores = await response.json();
-        loadFighters();
-    } catch (error) {
-        console.error('Error al conectar con la API de Java:', error);
-    }
+function normalizarPersonajeNaruto(personaje) {
+    return {
+        id: personaje.id + 100000,
+        nombre: personaje.nombre,
+        puntosVida: Math.round(personaje.nivelDePoder / 60),
+        energia: Math.round(personaje.nivelDePoder / 70),
+        defensaBase: parseFloat((personaje.nivelDePoder / 600).toFixed(1)),
+        url_imagen: personaje.url_imagen || null,
+        armaDelPeleador: [],
+        ataqueDelPeleador: [],
+        aldea: personaje.aldea
+    };
 }
 
-function loadFighters() {
-    peleadores.forEach(fighter => {
-        const option1 = document.createElement('option');
-        option1.value = JSON.stringify(fighter);
-        option1.text = fighter.nombre + medallaPara(fighter.nombre);
-        fighter1Select.appendChild(option1);
+async function fetchData() {
+    let propios = [];
+    let delProfe = [];
 
-        const option2 = document.createElement('option');
-        option2.value = JSON.stringify(fighter);
-        option2.text = fighter.nombre + medallaPara(fighter.nombre);
-        fighter2Select.appendChild(option2);
+    try {
+        const response = await fetch(API_URL);
+        propios = await response.json();
+    } catch (error) {
+        console.error('Error al conectar con TU API:', error);
+    }
+
+    try {
+        const response2 = await fetch(API_URL2);
+        const crudosDelProfe = await response2.json();
+        delProfe = crudosDelProfe.map(normalizarPersonajeNaruto);
+    } catch (error) {
+        console.error('Error al conectar con la API del profe:', error);
+    }
+
+    peleadores = [...propios, ...delProfe];
+    renderizarGrid(grid1, 1);
+    renderizarGrid(grid2, 2);
+}
+
+function renderizarGrid(container, slot) {
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (peleadores.length === 0) {
+        const vacio = document.createElement('p');
+        vacio.className = 'mini-grid-loading';
+        vacio.textContent = 'No hay personajes disponibles.';
+        container.appendChild(vacio);
+        return;
+    }
+
+    const seleccionado = slot === 1 ? fighter1Data : fighter2Data;
+
+    peleadores.forEach(fighter => {
+        const card = document.createElement('div');
+        card.className = 'mini-card';
+        if (seleccionado && seleccionado.id === fighter.id) {
+            card.classList.add('selected');
+        }
+
+        const img = document.createElement('img');
+        img.src = fighter.url_imagen || (slot === 1 ? 'placeholder1.png' : 'placeholder2.png');
+        img.alt = fighter.nombre;
+
+        const nombre = document.createElement('span');
+        nombre.textContent = fighter.nombre + medallaPara(fighter.nombre);
+
+        card.appendChild(img);
+        card.appendChild(nombre);
+
+        card.addEventListener('click', () => seleccionarFighter(slot, fighter));
+
+        container.appendChild(card);
     });
 }
 
-// Vuelve a armar las opciones de los selects para reflejar medallas actualizadas,
-// manteniendo la selección actual de cada fighter
-function refrescarSelects() {
-    const valorPrevio1 = fighter1Select.value;
-    const valorPrevio2 = fighter2Select.value;
+function seleccionarFighter(slot, fighter) {
+    if (slot === 1) {
+        fighter1Data = fighter;
+    } else {
+        fighter2Data = fighter;
+    }
 
-    fighter1Select.innerHTML = '<option value="" disabled>Seleccioná al Artista 1...</option>';
-    fighter2Select.innerHTML = '<option value="" disabled>Seleccioná al Artista 2...</option>';
-    loadFighters();
+    actualizarPanel(slot, fighter);
 
-    if (valorPrevio1) fighter1Select.value = valorPrevio1;
-    if (valorPrevio2) fighter2Select.value = valorPrevio2;
+    renderizarGrid(grid1, 1);
+    renderizarGrid(grid2, 2);
 }
 
-// Actualizar Artista 1
-fighter1Select.addEventListener('change', () => {
-    if (!fighter1Select.value) return;
-    const selected = JSON.parse(fighter1Select.value);
-    
-    fighter1Image.src = selected.url_imagen || 'placeholder1.png';
-    
-    // Rellenar datos
-    hp1.textContent = selected.puntosVida;
-    en1.textContent = selected.energia;
-    def1.textContent = selected.defensaBase;
+function actualizarPanel(slot, selected) {
+    const img = slot === 1 ? fighter1Image : fighter2Image;
+    const statsBox = slot === 1 ? stats1 : stats2;
+    const hp = slot === 1 ? hp1 : hp2;
+    const en = slot === 1 ? en1 : en2;
+    const def = slot === 1 ? def1 : def2;
+    const hpBar = slot === 1 ? hpBar1 : hpBar2;
+    const enBar = slot === 1 ? enBar1 : enBar2;
+    const armaSpan = slot === 1 ? arma1Span : arma2Span;
+    const ataqueSpan = slot === 1 ? ataque1Span : ataque2Span;
+    const placeholder = slot === 1 ? 'placeholder1.png' : 'placeholder2.png';
 
-    // Animar barras (asumiendo un tope de 200 para que se llene visualmente bien)
-    hpBar1.style.width = Math.min((selected.puntosVida / 200) * 100, 100) + '%';
-    enBar1.style.width = Math.min((selected.energia / 150) * 100, 100) + '%';
+    img.src = selected.url_imagen || placeholder;
 
-    // Mostrar Arma y Ataque (tomados de tus relaciones @ManyToMany en Java)
-    arma1Span.textContent = (selected.armaDelPeleador && selected.armaDelPeleador.length > 0) 
-        ? selected.armaDelPeleador.map(a => a.nombre).join(', ') 
+    hp.textContent = selected.puntosVida;
+    en.textContent = selected.energia;
+    def.textContent = selected.defensaBase;
+
+    hpBar.style.width = Math.min((selected.puntosVida / 200) * 100, 100) + '%';
+    enBar.style.width = Math.min((selected.energia / 150) * 100, 100) + '%';
+
+    armaSpan.textContent = (selected.armaDelPeleador && selected.armaDelPeleador.length > 0)
+        ? selected.armaDelPeleador.map(a => a.nombre).join(', ')
         : 'Sin equipamiento';
 
-    ataque1Span.textContent = (selected.ataqueDelPeleador && selected.ataqueDelPeleador.length > 0) 
-        ? selected.ataqueDelPeleador.map(at => at.nombre).join(', ') 
+    ataqueSpan.textContent = (selected.ataqueDelPeleador && selected.ataqueDelPeleador.length > 0)
+        ? selected.ataqueDelPeleador.map(at => at.nombre).join(', ')
         : 'Sin ataques especiales';
 
-    stats1.classList.remove('hidden');
-});
+    statsBox.classList.remove('hidden');
+}
 
-// Actualizar Artista 2
-fighter2Select.addEventListener('change', () => {
-    if (!fighter2Select.value) return;
-    const selected = JSON.parse(fighter2Select.value);
-    
-    fighter2Image.src = selected.url_imagen || 'placeholder2.png';
-    
-    hp2.textContent = selected.puntosVida;
-    en2.textContent = selected.energia;
-    def2.textContent = selected.defensaBase;
-
-    hpBar2.style.width = Math.min((selected.puntosVida / 200) * 100, 100) + '%';
-    enBar2.style.width = Math.min((selected.energia / 150) * 100, 100) + '%';
-
-    arma2Span.textContent = (selected.armaDelPeleador && selected.armaDelPeleador.length > 0) 
-        ? selected.armaDelPeleador.map(a => a.nombre).join(', ') 
-        : 'Sin equipamiento';
-
-    ataque2Span.textContent = (selected.ataqueDelPeleador && selected.ataqueDelPeleador.length > 0) 
-        ? selected.ataqueDelPeleador.map(at => at.nombre).join(', ') 
-        : 'Sin ataques especiales';
-
-    stats2.classList.remove('hidden');
-});
-
-// Lógica de Batalla Épica
 fightButton.addEventListener('click', () => {
-    if (!fighter1Select.value || !fighter2Select.value) {
+    if (!fighter1Data || !fighter2Data) {
         alert('⚠️ Seleccioná ambos artistas para iniciar el duelo.');
         return;
     }
 
-    const fighter1 = JSON.parse(fighter1Select.value);
-    const fighter2 = JSON.parse(fighter2Select.value);
+    const fighter1 = fighter1Data;
+    const fighter2 = fighter2Data;
 
     if (fighter1.id === fighter2.id) {
         alert('⚠️ Un artista no puede competir contra sí mismo.');
@@ -182,7 +209,6 @@ fightButton.addEventListener('click', () => {
     resultDiv.classList.remove('hidden');
 
     setTimeout(() => {
-        // Cálculo avanzado sumando bonificadores de armas si existen
         let bonusArma1 = 0;
         if (fighter1.armaDelPeleador) {
             fighter1.armaDelPeleador.forEach(a => bonusArma1 += (a.bonificadorDanio || 0));
@@ -212,8 +238,6 @@ fightButton.addEventListener('click', () => {
 
         resultDiv.textContent = winnerText;
 
-        // --- Animación de "daño": la barra de vida del perdedor baja visualmente ---
-        // (no toca los datos reales, es solo un efecto visual del golpe recibido)
         if (winnerName === fighter1.nombre) {
             hpBar2.style.width = '8%';
             hpBar2.classList.add('bar-hit');
@@ -222,7 +246,6 @@ fightButton.addEventListener('click', () => {
             hpBar1.classList.add('bar-hit');
         }
 
-        // Si hay un ganador real: confeti, sonido y registro de la victoria
         if (winnerName !== "Empate") {
             confetti({
                 particleCount: 120,
@@ -231,57 +254,34 @@ fightButton.addEventListener('click', () => {
             });
             sonidoVictoria();
             guardarVictoria(winnerName);
-            refrescarSelects();
+            renderizarGrid(grid1, 1);
+            renderizarGrid(grid2, 2);
         }
 
-        // Agregar al historial
         historySection.classList.remove('hidden');
         const li = document.createElement('li');
         li.textContent = `${fighter1.nombre} vs ${fighter2.nombre} ➡️ Ganador: ${winnerName}${medallaPara(winnerName)}`;
-        historyList.prepend(li); // Inserta arriba, la más nueva primero
+        historyList.prepend(li);
 
     }, 1200);
 });
 
-// --- Botón "Pelea Aleatoria" ---
 randomButton.addEventListener('click', () => {
     if (peleadores.length < 2) {
         alert('⚠️ Todavía no cargaron los artistas, esperá un segundo y reintentá.');
         return;
     }
 
-    // Elegir dos índices distintos al azar
     const idx1 = Math.floor(Math.random() * peleadores.length);
     let idx2 = Math.floor(Math.random() * peleadores.length);
     while (idx2 === idx1) {
         idx2 = Math.floor(Math.random() * peleadores.length);
     }
 
-    const random1 = peleadores[idx1];
-    const random2 = peleadores[idx2];
+    seleccionarFighter(1, peleadores[idx1]);
+    seleccionarFighter(2, peleadores[idx2]);
 
-    // Seleccionar esos artistas en los <select> (comparando por id, ya que el
-    // texto de la opción puede tener medalla agregada al lado del nombre)
-    seleccionarPorId(fighter1Select, random1.id);
-    seleccionarPorId(fighter2Select, random2.id);
-
-    // Disparar el evento "change" a mano, para que se actualicen stats/imagen
-    fighter1Select.dispatchEvent(new Event('change'));
-    fighter2Select.dispatchEvent(new Event('change'));
-
-    // Y arrancar la pelea automáticamente
     fightButton.click();
 });
-
-function seleccionarPorId(selectElement, id) {
-    for (const option of selectElement.options) {
-        if (!option.value) continue;
-        const data = JSON.parse(option.value);
-        if (data.id === id) {
-            selectElement.value = option.value;
-            return;
-        }
-    }
-}
 
 fetchData();
