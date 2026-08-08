@@ -71,17 +71,19 @@ let peleadores = [];
 let fighter1Data = null;
 let fighter2Data = null;
 
-function normalizarPersonajeNaruto(personaje) {
+function normalizarPersonajeCompanero(personaje) {
     return {
-        id: personaje.id + 100000,
+        id: personaje.id + 200000,
         nombre: personaje.nombre,
-        puntosVida: Math.round(personaje.nivelDePoder / 60),
-        energia: Math.round(personaje.nivelDePoder / 70),
-        defensaBase: parseFloat((personaje.nivelDePoder / 600).toFixed(1)),
-        url_imagen: personaje.url_imagen || null,
+        puntosVida: personaje.puntosVida,
+        energia: personaje.energia,
+        defensaBase: personaje.defensaBase,
+        url_imagen: (personaje.url_Imagen || personaje.url_imagen)
+            ? `http://localhost:8080/${personaje.url_Imagen || personaje.url_imagen}`
+            : null,
         armaDelPeleador: [],
         ataqueDelPeleador: [],
-        aldea: personaje.aldea
+        club: personaje.club
     };
 }
 
@@ -99,7 +101,7 @@ async function fetchData() {
     try {
         const response2 = await fetch(API_URL2);
         const crudosDelProfe = await response2.json();
-        delProfe = crudosDelProfe.map(normalizarPersonajeNaruto);
+        delProfe = crudosDelProfe.map(normalizarPersonajeCompanero);
     } catch (error) {
         console.error('Error al conectar con la API del profe:', error);
     }
